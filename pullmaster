@@ -1,0 +1,54 @@
+#!/bin/sh
+
+exitIfError()
+{
+	if [ $1 != 0 ]; then
+		echo $2
+		exit $1
+	fi
+}
+
+log()
+{
+	LOG_PREFIX=">>>"
+	echo "$LOG_PREFIX $1"
+}
+
+CURRENT_BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null)
+exitIfError $? "Can not determine current branch"
+
+PARENT_BRANCH=$1
+
+if [ -z "$PARENT_BRANCH" ]
+then
+	PARENT_BRANCH="master"
+fi
+
+log "Will proceed with $PARENT_BRANCH"
+log "Now on $CURRENT_BRANCH"
+
+if [ "$CURRENT_BRANCH" = "$PARENT_BRANCH" ]; then
+	log "You are already on $PARENT_BRANCH. Switch to another branch"
+	exit 0
+fi
+
+if [ "$CURRENT_BRANCH" = "" ]; then
+	log "Can not determine current branch"
+	exit 0
+fi
+log "Switching to $PARENT_BRANCH"
+git checkout $PARENT_BRANCH
+exitIfError $? "Can not checkout $PARENT_BRANCH"
+
+log "Pulling from remote $PARENT_BRANCH"
+git pull --rebase
+exitIfError $? "Can not rebase $PARENT_BRANCH"
+
+log "Switching back to $CURRENT_BRANCH"
+git checkout $CURRENT_BRANCH
+exitIfError $? "Can not checkout initial branch: $CURRENT_BRANCH"
+
+log "Rebasing master to $CURRENT_BRANCH"
+git rebase $PARENT_BRANCH
+exitIfError $? "Can not rebase $CURRENT_BRANCH ontop of $PARENT_BRANCH changes"
+
