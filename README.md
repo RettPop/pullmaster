@@ -2,8 +2,9 @@
 Bash script to rebase local git branch with local master
 
 # Usage
-pullmaster [branch]
-  branch - optional custom master name. Default: _master_
+`pullmaster [branch]`
+  
+  `branch` - optional custom master name. Default: _master_
 
 # Usecase
 When you are going to work with several features and have only one git branch (like in case with Gerrit), it is pretty convenient to have set of local development branches to switch between code revisions. Then you have to keep your local master updated and branches rebased on top of it. What the script does is:
