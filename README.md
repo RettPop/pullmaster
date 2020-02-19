@@ -15,4 +15,4 @@ When you are going to work with several features and have only one git branch (l
 1. check out back stored branch
 1. makes `git rebase [branch]`
 
-Script stops on any error it facing.
+If any error, script stops.
